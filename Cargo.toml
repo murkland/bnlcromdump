@@ -10,6 +10,4 @@ zip = "0.6"
 tempfile = "3"
 log = "0.4"
 env_logger = "0.9.0"
-
-[target.'cfg(windows)'.dependencies]
-winreg = "0.50"
+steamlocate = "1.2"

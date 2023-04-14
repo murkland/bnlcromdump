@@ -90,21 +90,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::Builder::from_default_env()
         .filter(Some("romdump"), log::LevelFilter::Info)
         .init();
-    let steam_path = bnlctools::find_steam_path().unwrap();
-    log::info!("found steam installation: {}", steam_path.display());
 
-    let steamapps_common_path = steam_path.join("steamapps").join("common");
+    let mut steamdir = steamlocate::SteamDir::locate().unwrap();
 
     let output_path = std::path::PathBuf::from_str("roms")?;
     let _ = std::fs::create_dir(&output_path);
 
-    dump_bnlc_rom_archives(
-        &steamapps_common_path.join("MegaMan_BattleNetwork_LegacyCollection_Vol1"),
-        &output_path,
-    );
-    dump_bnlc_rom_archives(
-        &steamapps_common_path.join("MegaMan_BattleNetwork_LegacyCollection_Vol2"),
-        &output_path,
-    );
+    if let Some(app) = steamdir.app(&1798010) {
+        // Vol 1
+        dump_bnlc_rom_archives(&app.path, &output_path);
+    }
+
+    if let Some(app) = steamdir.app(&1798020) {
+        // Vol 2
+        dump_bnlc_rom_archives(&app.path, &output_path);
+    }
     Ok(())
 }

@@ -96,12 +96,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output_path = std::path::PathBuf::from_str("roms")?;
     let _ = std::fs::create_dir(&output_path);
 
-    if let Some(app) = steamdir.app(&1798010) {
+    let apps = steamdir.apps();
+
+    if let Some(app) = apps.get(&1798010).and_then(|v| v.as_ref()) {
         // Vol 1
         dump_bnlc_rom_archives(&app.path, &output_path);
     }
 
-    if let Some(app) = steamdir.app(&1798020) {
+    if let Some(app) = apps.get(&1798020).and_then(|v| v.as_ref()) {
         // Vol 2
         dump_bnlc_rom_archives(&app.path, &output_path);
     }

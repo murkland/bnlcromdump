@@ -1,0 +1,46 @@
+name: release
+
+permissions:
+    contents: write
+
+on:
+    release:
+        types:
+            - created
+
+jobs:
+    release-windows:
+        runs-on: windows-latest
+        defaults:
+            run:
+                shell: powershell
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+            - uses: dtolnay/rust-toolchain
+            - run: cargo build --release
+            - uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              with:
+                  upload_url: ${{ github.event.release.upload_url }}
+                  asset_path: target/release/bnlcromdump.exe
+                  asset_name: bnlcromdump-windows.exe
+                  asset_content_type: application/octet-stream
+    release-linux:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+            - uses: dtolnay/rust-toolchain
+            - run: cargo build --release
+            - uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              with:
+                  upload_url: ${{ github.event.release.upload_url }}
+                  asset_path: target/release/bnlcromdump
+                  asset_name: bnlcromdump-linux
+                  asset_content_type: application/octet-stream
